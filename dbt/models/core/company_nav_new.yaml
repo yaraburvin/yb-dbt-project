@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: company_nav_new
+    description: >
+      Table contains the Net Asset Value (NAV) of companies within a fund on a given date.
+      In this table, NAV is calculated as follows:
+        NAV = fund NAV (on a given date) / sum of all company valuations in the fund on the same date.
+        See fund_nav.yaml for more details on fund NAV calculation.
+      Note, this table only contains company NAV for the dates where both fund NAV and company valuations are available.
+
+    columns:
+      - name: company_name
+        description: Unique Name of the company within fund(s). Same company may be present in multiple funds.
+        tests:
+          - not_null
+      
+      - name: fund_name
+        description: Name of the fund that holds the investment in this company
+        tests:
+          - not_null
+      
+      - name: company_valuation_date
+        description: Date when the company valuation was performed (DD/MM/YYYY format)
+        tests:
+          - not_null
+      
+      - name: company_valuation
+        description: >
+          The valuation amount of the company at the specified date.
+          Represents the total enterprise value or fair value of the company.
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      
+      - name: fund_nav
+        description: >
+          The Net Asset Value of the fund on the same date as the company valuation.
+          This represents the total fund value including all investments, calls, and distributions
+          up to the valuation date.
+        tests:
+          - not_null
+    
+    meta:
+      business_owner: Finance Team
+      data_source: Derived from fund_nav and int_company_data_clean models
+      refresh_frequency: Daily
+      
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - company_name
+            - fund_name
+            - company_valuation_date

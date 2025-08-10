@@ -1,0 +1,73 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# DBT artifacts
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv
+venv/
+ENV/
+env/
+.env
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+fund_nav_report.log
+
+# Excel files (if generated locally)
+*.xlsx
+nav_report_*.xlsx
+fund_nav_report_*.xlsx
+
+# Credentials (extra security)
+profiles.yml
+*password*
+*secret*
+*token*
+
+# Jupyter Notebook
+.ipynb_checkpoints
