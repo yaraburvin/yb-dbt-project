@@ -19,6 +19,7 @@ def read_google_sheet(sheet_id, gid=None):
         print(f"Error reading Google Sheet: {e}")
         raise
 
+
 def create_snowflake_connection_sqlalchemy():
     # Creates a Snowflake connection using SQLAlchemy engine.
 
@@ -37,6 +38,7 @@ def create_snowflake_connection_sqlalchemy():
     
     return engine
 
+
 def create_snowflake_connection_direct():
     conn = snowflake.connector.connect(
         user=os.getenv('DBT_SECRET__USER'),
@@ -49,17 +51,20 @@ def create_snowflake_connection_direct():
     
     return conn
 
+
 def load_data_to_snowflake(sheet_id, table_name, conn, gid=None):
     
     df = read_google_sheet(sheet_id, gid=gid)
-
+    
+    # Remove leading/trailing spaces
+    df.columns = df.columns.str.strip()
+    
     # Writing to snowflake table, using CREATE/REPLACE strategy
     df.to_sql(table_name, con=conn, if_exists='replace', index=False)
     print(f"Data loaded into Snowflake table {table_name} successfully.")
 
 
 if __name__ == "__main__":
-    
     #inputs
     sheet_id = input("Enter Google Sheet ID: ")
     table_name = input("Enter Snowflake table name: ")
