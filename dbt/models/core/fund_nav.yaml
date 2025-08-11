@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: fund_nav
+    description: "This model calculates the Net Asset Value (NAV) for each fund."
+    columns:
+      - name: surrogate_key
+        description: "Unique identifier for each fund NAV record."
+        tests:
+          - not_null
+          - unique
+      - name: fund_name
+        description: "Name of the fund."
+        tests:
+          - not_null
+      - name: nav
+        description: "Net Asset Value of the fund on the given date."
+        tests:
+          - not_null
+
+      - name: date
+        description: "The date of NAV calculation."
+        tests:
+          - not_null
+          - date_formating

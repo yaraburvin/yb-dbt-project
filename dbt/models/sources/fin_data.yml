@@ -1,0 +1,63 @@
+version: 2
+
+sources:
+  - name: fin_data
+    database: analytics_db
+    schema: fin_data
+
+    tables:
+      - name: fund_data
+        columns:
+          - name: fund_name
+            tests:
+              - not_null
+          - name: fund_size
+            tests:
+              - not_null
+          - name: transaction_type
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['Commitment', 'Valuation', 'Call', 'Distribution']
+          - name: transaction_index
+            tests:
+              - not_null
+          - name: transaction_date
+            tests:
+              - not_null
+          - name: transaction_amount
+            tests:
+              - not_null
+          - name: sector
+          - name: country
+          - name: region
+      
+      - name: company_data
+        columns:
+          - name: fund_name
+            tests:
+              - not_null
+          - name: company_id
+            tests:
+              - not_null
+          - name: company_name
+            tests:
+              - not_null
+          - name: transaction_type
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['Valuation']
+          - name: transaction_index
+            tests:
+              - not_null
+          - name: transaction_date
+            tests:
+              - not_null
+          - name: transaction_amount
+            tests:
+              - not_null
+          - name: sector
+          - name: country
+          - name: region
+

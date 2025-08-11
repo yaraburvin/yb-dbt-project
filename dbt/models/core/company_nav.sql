@@ -24,7 +24,7 @@ company_data as (
 first_valuation as (
     select 
         fund_name,
-        min(to_date(transaction_date, 'DD/MM/YYYY')) as first_valuation_date,
+        min(transaction_date) as first_valuation_date,
     from fund_data
     where transaction_type = 'VALUATION'
     group by fund_name
@@ -61,8 +61,9 @@ cvc_ownership as (
 
 )
 
-
+-- sum the NAV for each company across all funds.
 select 
+    hash(company_name, transaction_date) as surrogate_key,
     company_name,
     transaction_date as date,
     sum(fund_nav_in_company) as company_nav

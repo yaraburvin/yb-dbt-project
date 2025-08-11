@@ -5,10 +5,11 @@
 2. [Setting up DBT environment locally](#setting-up-dbt-environment-locally)
 3. [DBT folder structure](#dbt-folder-structure)
 4. [NAV Exercises](#nav-exercises)
+5. [Tests](#tests)
 
 ## Data Modeling
 
-![Data Model](supplimentary/data_model.png)
+![Data Model](supplementary/data_model.png)
 
 Above you can see schematic representation of a data model.
 
@@ -43,12 +44,20 @@ It is also important to consider what extra data we would require to uncover mor
 Apart from the obvious foreign and primary keys missing from the original data extracts:
 1. fund status - is it still active or closed etc. 
 2. first investment date - when first investment happened
-3. closure date - for when cvc is no longer investing into the fund
+3. closure date - for when PE is no longer investing into the fund
 4. company size - e.g. startup, skaleup, enterprise etc
 5. headcount - how big is the company based on headcount
 6. fund transaction/ company valuation transaction currency - transactions might be happening in various currencies.
 
-**Data ingestion considerations**
+**Loading Data into Snowflake**
+
+Data loaded using [`load_data_to_snowflake.py`](./scripts/load_data_to_snowflake.py)
+
+Includes:
+- Reading data from gsheet
+- Loading into dataframe 
+- Authentication to snowflake 
+- loading table into snowflake
 
 ---
 
@@ -69,6 +78,7 @@ Apart from the obvious foreign and primary keys missing from the original data e
 2. Created ANALYTICS_DB and PLAYGROUND_DB. The former DB would be used as production database for schemas containing ingestion data, the latter is to allow users create their own table in the dev environment.
 3. Also included two main warehouses - PLAYGROUND (adhoc queries) & SCHEDULER (for running jobs on schedule i.e. through airflow) 
 
+Alternatively, use docker & local postgres which is more straightforward.
 
 **Setting up dbt project**
 
@@ -111,7 +121,7 @@ Configuration Fields Explanations:
 - `database`: The Snowflake database where your data resides
 - `warehouse`: Compute warehouse for running queries
 - `schema`: Default schema for your models (uses environment variable for dynamic naming)
-- `threads`: Number of concurrent connections dbt can use to execute models in parallel. Depends on WH resources
+- `threads`: Number of concurrent connections dbt can use to execute models in parallel. Depends on WH resources vs model pipeline complexity
 
   
 2. [dbt_project.yml](./dbt/dbt_project.yml) - Main dbt project configuration
@@ -136,10 +146,10 @@ dbt/
 ├── dbt_packages/               # Installed packages
 │
 ├── sources/                    
-│   ├── sources.yml  #Source table definitions
+│   ├── sources.yml  # source table definitions
 │
 ├── models/ 
-│   ├── staging/ 
+│   ├── staging/  # create a view on top of source
 │   │
 │   ├── intermediate/  # Clean up and major transformations
 │   │
@@ -160,23 +170,29 @@ dbt/
 
 The project includes several NAV (Net Asset Value) calculation models:
 
-- `fund_nav.sql` - Calculates fund-level NAV based on transactions
-- `company_nav_new.sql` - Company-level NAV calculation
-- `company_nav.sql` - Alternative company-level NAV calculation
+- [`fund_nav.sql`](./dbt/models/core/fund_nav.md) - Calculates fund-level NAV based on transactions
+- [`company_nav_new.sql`](./dbt/models/core/company_nav_new.md) - Company-level NAV calculation
+- [`company_nav.sql`](./dbt/models/core/company_nav.md) - Alternative company-level NAV calculation
 
+---
 
-**Fund NAV Model**:
+## Tests 
 
-1. **Duplicate Handling**: When multiple evaluations occur on the same date, the **maximum amount** is taken.
-2. the above can also be true if we are taking latest **index**, however confidence to this approach is low since index has some inconsistencies with data values.
-3. **Valuation Grouping**: NAV is calculated in segments between valuations, with rolling calculations within each valuation period.
+1. Use in-built tests like unique & not null to make sure there are no duplicates & no unexpected null values where required
 
+2. You can write custom tests like:
+   - [`test_date_formatting.sql`](./dbt/tests/generic/test_date_formatting.sql) - Custom test for date formatting validation 
 
-**Company NAV Model**:
-1. **Commitments are always made before the first valuation**
-2. **Ownership Calculation**: Fund ownership percentage is calculated as `total_commitment_amount / fund_size` based on commitments made up to the first valuation date
-3. **Company NAV Aggregation**: Final company NAV is the sum of `fund_nav_in_company` across all funds that have invested in that company
-4. **Ownership**: Ownership percentages remain constant, as the fund size is recorded as the latest value 
+3. One may consider using conditional testing on the columns where null values are expected for certain 
 
-**Alternative Company NAV Model**:
+4. Use expected values tests where all values are not null and predefined (type of transaction, sector type etc)
+````yaml
+   tests:
+      - not_null
+      - accepted_values:
+            values: ['Commitment', 'Valuation', 'Call', 'Distribution'] 
+````
 
+5. Since NAV is tracked on specific days, a custom test can be applied to track company NAV change drastically and a report can be sent directly to the stakeholder.  [`fund_nav_simple.py`](./scripts/fund_nav_simple.py) - automated is an example of how you can do it.
+
+To track performance of your model in terms of data quality and maintenance, you can track % of failed tests on each model over time.

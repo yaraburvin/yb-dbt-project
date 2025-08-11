@@ -1,0 +1,28 @@
+
+airflow:
+  target: "{{ env_var('DBT__DEFAULT_TARGET') }}" # default target 
+  outputs:
+    dev:
+      type: snowflake
+      account: ah02912.eu-west-2.aws
+      user: "{{ env_var('DBT_SECRET__USER') }}"
+      password: "{{ env_var('PASSWORD') }}"
+      database: PLAYGROUND_DB
+      warehouse: PLAYGROUND_WH
+      schema: "{{ env_var('DBT__USER_SCHEMA') }}"
+      threads: 1
+      client_session_keep_alive: True
+
+    prod: # production env variables will be accessed
+      type: snowflake
+      account: ah02912.eu-west-2.aws
+      user: "{{ env_var('DBT_SECRET__USER') }}"
+      password: "{{ env_var('DBT_SECRET__PASSWORD') }}"
+      database: ANALYTICS_DB
+      warehouse: SCHEDULER_WH
+      schema: REPORTS
+      threads: 1
+      client_session_keep_alive: False
+
+
+    # additionally may set up ci environmnet to run CI dbt tests against it

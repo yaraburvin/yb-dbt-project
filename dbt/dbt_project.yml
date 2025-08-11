@@ -7,11 +7,12 @@ version: '1.0'
 require-dbt-version: [">=1.0.0", "<2.0.0"]
 
 
-source-paths: ["models"]
+model-paths: ["models"]
 analysis-paths: ["analysis"]
 test-paths: ["tests"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
+
 
 target-path: "target"
 
@@ -20,3 +21,12 @@ clean-targets:
     - "dbt_modules"
 
 
+tests:
+  +store_failures: true
+
+# These settings can be overridden in the individual model files
+models:
+  +materialized: table
+  +persist_docs:
+    relation: true
+    columns: true

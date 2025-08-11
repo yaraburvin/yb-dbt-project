@@ -64,7 +64,6 @@ nav_report_*.xlsx
 fund_nav_report_*.xlsx
 
 # Credentials (extra security)
-profiles.yml
 *password*
 *secret*
 *token*
