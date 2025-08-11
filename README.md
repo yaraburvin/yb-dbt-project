@@ -135,8 +135,7 @@ name & profile can be renamed but nothing needs to be changed to get you started
 2. If successful, run ```dbt deps ``` to install all packages one might require 
 3. Run ```dbt seed ``` to test that you can execute generation of some seed files
 4. You can now use ```dbt build``` or ```dbt run``` to run models. Please refer to [dbt command guide](https://docs.getdbt.com/reference/dbt-commands) for more detailed explanation.
-
-NB make sure to CD into dbt directory first to run any dbt commands
+5. make sure to cd into dbt directory first to run any dbt commands
 
 ---
 
