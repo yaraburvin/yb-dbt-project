@@ -147,7 +147,7 @@ dbt/
 ├── dbt_project.yml # Main project configuration
 ├── profiles.yml  # Database connection profiles
 ├── packages.yml  # Package dependencies
-├── dbt_packages/               # Installed packages
+├── dbt_packages/ # Installed packages
 │
 ├── sources/                    
 │   ├── sources.yml  # source table definitions
