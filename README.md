@@ -193,6 +193,6 @@ The project includes several NAV (Net Asset Value) calculation models:
             values: ['Commitment', 'Valuation', 'Call', 'Distribution'] 
 ````
 
-5. Since NAV is tracked on specific days, a custom test can be applied to track company NAV change drastically and a report can be sent directly to the stakeholder.  [`fund_nav_simple.py`](./scripts/fund_nav_simple.py) - automated is an example of how you can do it.
+5. Since NAV is tracked on specific days, a custom test can be applied to track company NAV change drastically and a report can be sent directly to the stakeholder.  [`fund_nav_email.py`](./scripts/fund_nav_email.py) - automated is an example of how you can do it.
 
 To track performance of your model in terms of data quality and maintenance, you can track % of failed tests on each model over time.
