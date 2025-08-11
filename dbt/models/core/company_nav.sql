@@ -63,7 +63,7 @@ cvc_ownership as (
 
 -- sum the NAV for each company across all funds.
 select 
-    hash(company_name, transaction_date) as surrogate_key,
+    {{ dbt_utils.generate_surrogate_key(['company_name', 'transaction_date']) }} as surrogate_key,
     company_name,
     transaction_date as date,
     sum(fund_nav_in_company) as company_nav

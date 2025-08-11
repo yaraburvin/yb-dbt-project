@@ -62,7 +62,7 @@ calculate_fund_nav as (
 )
 
 select
-    hash(company_name, company_valuation_date) as surrogate_key,
+    {{ dbt_utils.generate_surrogate_key(['company_name', 'company_valuation_date']) }} as surrogate_key,
     company_name,
     company_valuation_date,
     sum(fund_nav_in_company) as company_nav

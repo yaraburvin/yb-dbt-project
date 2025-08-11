@@ -59,7 +59,7 @@ calculate_nav as (
 )
 
 select 
-    hash(fund_name, date) as surrogate_key,
+    {{ dbt_utils.generate_surrogate_key(['fund_name', 'date']) }} as surrogate_key,
     fund_name,
     date,
     cumulative_nav as nav
